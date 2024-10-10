@@ -1,0 +1,64 @@
+node_modules
+
+
+
+
+
+const express=require("express")
+const app=express()
+const connectDB =require("./config/database")
+const User=require('./models/user')
+app.use(express.json());
+app.get("/signin",async (req,res)=>{
+    // const user=new User()
+    const all= await User.find({emailId:req.body.emailId})
+try{
+    // await user.save()
+    res.json(all)
+
+}catch(err){
+    res.status(400).send("error")
+
+}
+
+})
+
+
+app.delete('/del',async(req,res)=>{
+
+    try{
+        const id=req.body.id;
+       await User.findByIdAndDelete(id)
+        res.send("done del")
+
+    }catch(err){
+        res.status(400).send("error")
+
+    }
+
+
+})
+
+app.patch('/pat',async(req,res)=>{
+
+    const id=req.body.id;
+    const data=req.body
+    try{
+        const user=await User.findByIdAndUpdate(id,data)
+        res.send('updated')
+    }
+    catch(err){
+        console.error("not avaliable")
+    }
+
+})
+
+
+connectDB().then(()=>{
+    console.log('Connected')
+    app.listen(3000,()=>{
+        console.log("started")
+    })
+}).catch((err)=>{
+console.error("not connected")
+})
